@@ -146,56 +146,15 @@
   </div>
 
   <div class="toast" id="toast">تمت العملية بنجاح</div>
-  <footer id="footer-text">© جميع الحقوق محفوظة - 15Percent</footer>
+  <footer id="footer-text">©️ جميع الحقوق محفوظة - 15Percent</footer>
 
 <script>
   let balances = { personal: 0, commitments: 0, investment: 0 };
   let currency = 'USD';
   let currentLang = 'ar';
+  let items = { personal: [], commitments: [], investment: [] };
 
   const symbols = { USD: "$", EUR: "€", AED: "د.إ", SAR: "ر.س", KWD: "د.ك" };
-  const texts = {
-    ar: {
-      header: "نظام تقسيم الدخل - 15Percent",
-      income: "الدخل الكلي",
-      placeholderIncome: "أدخل المبلغ",
-      currency: "اختر العملة",
-      addIncome: "أضف الدخل",
-      reset: "مسح كل البيانات",
-      personal: "الحساب الشخصي",
-      commitments: "الالتزامات",
-      investment: "الاستثمار",
-      itemName: "اسم البند",
-      amount: "المبلغ",
-      addItem: "إضافة بند",
-      toast: "تمت العملية بنجاح",
-      suggestionHigh: "استثمر في مشروع أو عمل حر.",
-      suggestionMid: "ادخر لصندوق الطوارئ.",
-      suggestionLow: "ابدأ بتعلم مهارة جديدة.",
-      footer: "© جميع الحقوق محفوظة - 15Percent",
-      lang: "English"
-    },
-    en: {
-      header: "15Percent - Income Split System",
-      income: "Total Income",
-      placeholderIncome: "Enter amount",
-      currency: "Select currency",
-      addIncome: "Add Income",
-      reset: "Reset All Data",
-      personal: "Personal Account",
-      commitments: "Commitments",
-      investment: "Investment",
-      itemName: "Item Name",
-      amount: "Amount",
-      addItem: "Add Item",
-      toast: "Operation successful",
-      suggestionHigh: "Invest in a business or side project.",
-      suggestionMid: "Save for an emergency fund.",
-      suggestionLow: "Start learning a new skill.",
-      footer: "© All rights reserved - 15Percent",
-      lang: "العربية"
-    }
-  };
 
   function updateUI() {
     document.getElementById('personal-balance').textContent = balances.personal.toFixed(2) + " " + symbols[currency];
@@ -203,53 +162,100 @@
     document.getElementById('investment-balance').textContent = balances.investment.toFixed(2) + " " + symbols[currency];
   }
 
-  function addIncome() {
-    const income = parseFloat(document.getElementById('income').value);
-    currency = document.getElementById('currency').value;
-    if (!income || income <= 0) return alert(currentLang === 'ar' ? "أدخل مبلغ صحيح" : "Enter valid amount");
-    const third = income / 3;
-    balances.personal += third;
-    balances.commitments += third;
-    balances.investment += third;
-    updateUI();
-    showToast(texts[currentLang].toast);
-    showSuggestion();
-    saveData();
+  function renderItems() {
+    ['personal', 'commitments', 'investment'].forEach(type => {
+      const list = document.getElementById(`${type}-list`);
+      list.innerHTML = '';
+      items[type].forEach(({ name, amount }) => {
+        const li = document.createElement("li");
+        const span = document.createElement("span");
+        span.textContent = `${name} - ${amount.toFixed(2)} ${symbols[currency]}`;
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const doneBtn = document.createElement("button");
+        doneBtn.className = "done-btn";
+        doneBtn.textContent = "✅";
+        doneBtn.onclick = () => {
+          li.classList.add("done");
+          balances[type] -= amount;
+          updateUI();
+          showSuggestion();
+          saveData();
+        };
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "delete-btn";
+        delBtn.textContent = "❌";
+        delBtn.onclick = () => {
+          items[type] = items[type].filter(i => !(i.name === name && i.amount === amount));
+          saveData();
+          renderItems();
+        };
+
+        actions.appendChild(doneBtn);
+        actions.appendChild(delBtn);
+        li.appendChild(span);
+        li.appendChild(actions);
+        list.appendChild(li);
+      });
+    });
   }
 
   function addItem(type) {
     const item = document.getElementById(`${type}-item`).value;
     const amount = parseFloat(document.getElementById(`${type}-amount`).value);
     if (!item || isNaN(amount)) return;
+    items[type].push({ name: item, amount });
+    saveData();
+    renderItems();
+  }
 
-    const li = document.createElement("li");
-    const span = document.createElement("span");
-    span.textContent = `${item} - ${amount.toFixed(2)} ${symbols[currency]}`;
+  function saveData() {
+    localStorage.setItem("balances", JSON.stringify(balances));
+    localStorage.setItem("currency", currency);
+    localStorage.setItem("items", JSON.stringify(items));
+  }
 
-    const actions = document.createElement("div");
-    actions.className = "actions";
+  function loadData() {
+    const saved = localStorage.getItem("balances");
+    if (saved) balances = JSON.parse(saved);
+    const cur = localStorage.getItem("currency");
+    if (cur) {
+      currency = cur;
+      document.getElementById("currency").value = currency;
+    }
+    const savedItems = localStorage.getItem("items");
+    if (savedItems) items = JSON.parse(savedItems);
+    updateUI();
+    renderItems();
+    showSuggestion();
+  }
 
-    const doneBtn = document.createElement("button");
-    doneBtn.className = "done-btn";
-    doneBtn.textContent = "✅";
-    doneBtn.onclick = () => {
-      li.classList.add("done");
-      balances[type] -= amount;
+  function resetData() {
+    if (confirm("هل أنت متأكد؟")) {
+      balances = { personal: 0, commitments: 0, investment: 0 };
+      items = { personal: [], commitments: [], investment: [] };
       updateUI();
+      renderItems();
       showSuggestion();
-      saveData();
-    };
+      localStorage.clear();
+    }
+  }
 
-    const delBtn = document.createElement("button");
-    delBtn.className = "delete-btn";
-    delBtn.textContent = "❌";
-    delBtn.onclick = () => li.remove();
-
-    actions.appendChild(doneBtn);
-    actions.appendChild(delBtn);
-    li.appendChild(span);
-    li.appendChild(actions);
-    document.getElementById(`${type}-list`).appendChild(li);
+  function addIncome() {
+    const income = parseFloat(document.getElementById('income').value);
+    currency = document.getElementById('currency').value;
+    if (!income || income <= 0) return alert("أدخل مبلغ صحيح");
+    const third = income / 3;
+    balances.personal += third;
+    balances.commitments += third;
+    balances.investment += third;
+    updateUI();
+    showToast("تمت العملية بنجاح");
+    showSuggestion();
+    saveData();
   }
 
   function showToast(msg) {
@@ -263,60 +269,10 @@
     const val = balances.investment;
     const box = document.getElementById("suggestionBox");
     let msg = "";
-    if (val >= 1000) msg = texts[currentLang].suggestionHigh;
-    else if (val >= 500) msg = texts[currentLang].suggestionMid;
-    else msg = texts[currentLang].suggestionLow;
+    if (val >= 1000) msg = "استثمر في مشروع أو عمل حر.";
+    else if (val >= 500) msg = "ادخر لصندوق الطوارئ.";
+    else msg = "ابدأ بتعلم مهارة جديدة.";
     box.textContent = msg;
-  }
-
-  function toggleLanguage() {
-    currentLang = currentLang === 'ar' ? 'en' : 'ar';
-    document.documentElement.lang = currentLang;
-    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-    document.getElementById("langToggle").textContent = texts[currentLang].lang;
-    document.getElementById("header-title").textContent = texts[currentLang].header;
-    document.getElementById("income-label").textContent = texts[currentLang].income;
-    document.getElementById("income").placeholder = texts[currentLang].placeholderIncome;
-    document.getElementById("currency-label").textContent = texts[currentLang].currency;
-    document.getElementById("addIncomeBtn").textContent = texts[currentLang].addIncome;
-    document.getElementById("resetBtn").textContent = texts[currentLang].reset;
-    document.getElementById("personal-title").childNodes[0].textContent = texts[currentLang].personal + ": ";
-    document.getElementById("commitments-title").childNodes[0].textContent = texts[currentLang].commitments + ": ";
-    document.getElementById("investment-title").childNodes[0].textContent = texts[currentLang].investment + ": ";
-    document.querySelectorAll("input[placeholder='اسم البند']").forEach(el => el.placeholder = texts[currentLang].itemName);
-    document.querySelectorAll("input[placeholder='المبلغ']").forEach(el => el.placeholder = texts[currentLang].amount);
-    document.querySelectorAll(".add-item-btn").forEach(el => el.textContent = texts[currentLang].addItem);
-    document.getElementById("footer-text").textContent = texts[currentLang].footer;
-    showSuggestion();
-  }
-
-  function resetData() {
-    if (confirm(currentLang === 'ar' ? "هل أنت متأكد؟" : "Are you sure?")) {
-      balances = { personal: 0, commitments: 0, investment: 0 };
-      ['personal-list', 'commitments-list', 'investment-list'].forEach(id => {
-        document.getElementById(id).innerHTML = '';
-      });
-      updateUI();
-      document.getElementById("suggestionBox").textContent = "";
-      localStorage.clear();
-    }
-  }
-
-  function saveData() {
-    localStorage.setItem("balances", JSON.stringify(balances));
-    localStorage.setItem("currency", currency);
-  }
-
-  function loadData() {
-    const saved = localStorage.getItem("balances");
-    if (saved) balances = JSON.parse(saved);
-    const cur = localStorage.getItem("currency");
-    if (cur) {
-      currency = cur;
-      document.getElementById("currency").value = currency;
-    }
-    updateUI();
-    showSuggestion();
   }
 
   window.onload = loadData;
