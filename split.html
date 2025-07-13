@@ -30,10 +30,10 @@
     input, select, button {
       width: 100%;
       margin-bottom: 10px;
-      padding: 10px;
+      padding: 8px;
       border-radius: 6px;
       border: 1px solid #ccc;
-      font-size: 14px;
+      font-size: 13px;
     }
     button {
       background: #004aad;
@@ -44,12 +44,20 @@
     button.reset {
       background: #b00020;
     }
+    button.back {
+      background: #888;
+    }
     .section {
       margin-top: 20px;
       padding: 15px;
       background: white;
       border-radius: 8px;
       box-shadow: 0 0 5px #ccc;
+    }
+    .section h3 img {
+      width: 22px;
+      margin-left: 6px;
+      vertical-align: middle;
     }
     ul {
       list-style: none;
@@ -63,6 +71,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     li.done span {
       text-decoration: line-through;
@@ -71,9 +84,9 @@
     .actions button {
       margin-left: 5px;
       border: none;
-      padding: 5px;
+      padding: 4px 6px;
       border-radius: 4px;
-      font-size: 14px;
+      font-size: 12px;
     }
     .done-btn { background: #2ecc71; color: white; }
     .delete-btn { background: #e74c3c; color: white; }
@@ -118,9 +131,13 @@
     
     <button id="addIncomeBtn" onclick="addIncome()">أضف الدخل</button>
     <button class="reset" id="resetBtn" onclick="resetData()">مسح كل البيانات</button>
+    <button class="back" onclick="undoLast()">🔙 خطوة للوراء</button>
 
     <div class="section">
-      <h3 id="personal-title">الحساب الشخصي: <span id="personal-balance">0</span></h3>
+      <h3 id="personal-title">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="شخصي">
+        الحساب الشخصي: <span id="personal-balance">0</span>
+      </h3>
       <input type="text" id="personal-item" placeholder="اسم البند">
       <input type="number" id="personal-amount" placeholder="المبلغ">
       <button class="add-item-btn" onclick="addItem('personal')">إضافة بند</button>
@@ -128,7 +145,10 @@
     </div>
 
     <div class="section">
-      <h3 id="commitments-title">الالتزامات: <span id="commitments-balance">0</span></h3>
+      <h3 id="commitments-title">
+        <img src="https://cdn-icons-png.flaticon.com/512/1139/1139986.png" alt="التزامات">
+        الالتزامات: <span id="commitments-balance">0</span>
+      </h3>
       <input type="text" id="commitments-item" placeholder="اسم البند">
       <input type="number" id="commitments-amount" placeholder="المبلغ">
       <button class="add-item-btn" onclick="addItem('commitments')">إضافة بند</button>
@@ -136,7 +156,10 @@
     </div>
 
     <div class="section">
-      <h3 id="investment-title">الاستثمار: <span id="investment-balance">0</span></h3>
+      <h3 id="investment-title">
+        <img src="https://cdn-icons-png.flaticon.com/512/2910/2910790.png" alt="استثمار">
+        الاستثمار: <span id="investment-balance">0</span>
+      </h3>
       <input type="text" id="investment-item" placeholder="اسم البند">
       <input type="number" id="investment-amount" placeholder="المبلغ">
       <button class="add-item-btn" onclick="addItem('investment')">إضافة بند</button>
@@ -153,6 +176,7 @@
   let currency = 'USD';
   let currentLang = 'ar';
   let items = { personal: [], commitments: [], investment: [] };
+  let history = [];
 
   const symbols = { USD: "$", EUR: "€", AED: "د.إ", SAR: "ر.س", KWD: "د.ك" };
 
@@ -207,7 +231,18 @@
     const item = document.getElementById(`${type}-item`).value;
     const amount = parseFloat(document.getElementById(`${type}-amount`).value);
     if (!item || isNaN(amount)) return;
-    items[type].push({ name: item, amount });
+    const entry = { name: item, amount };
+    items[type].push(entry);
+    history.push({ type, entry });
+    saveData();
+    renderItems();
+  }
+
+  function undoLast() {
+    const last = history.pop();
+    if (!last) return;
+    const { type, entry } = last;
+    items[type] = items[type].filter(i => !(i.name === entry.name && i.amount === entry.amount));
     saveData();
     renderItems();
   }
@@ -237,6 +272,7 @@
     if (confirm("هل أنت متأكد؟")) {
       balances = { personal: 0, commitments: 0, investment: 0 };
       items = { personal: [], commitments: [], investment: [] };
+      history = [];
       updateUI();
       renderItems();
       showSuggestion();
