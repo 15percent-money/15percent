@@ -1,5 +1,4 @@
-
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -88,31 +87,17 @@
 </head>
 <body>
   <header data-key="header">مرحبًا بك في 15Percent</header>
+
   <button class="btn lang-btn" onclick="toggleLang()" data-key="language">English</button>
-
-  <!-- Google Sign-In -->
-  <div id="g_id_onload"
-       data-client_id="195413879651-lgdd99m1gaqltd2urtqg2n9ckbsgai4o.apps.googleusercontent.com"
-       data-context="signin"
-       data-ux_mode="popup"
-       data-callback="handleCredentialResponse"
-       data-auto_prompt="false">
-  </div>
-
-  <div class="g_id_signin"
-       data-type="standard"
-       data-shape="rectangular"
-       data-theme="outline"
-       data-text="sign_in_with"
-       data-size="large"
-       data-logo_alignment="left">
-  </div>
 
   <div class="container">
     <h1 data-key="mainTitle">قسّم دخلك بذكاء</h1>
     <p data-key="mainDesc">15Percent يساعدك على تنظيم دخلك الشهري بطريقة ذكية إلى ثلاث حسابات رئيسية.</p>
+
     <h2 data-key="introText">فقط 15٪ من الناس يعرفون كيف يُديرون دخلهم بذكاء… كن من القلة التي تصنع الفرق!</h2>
+
     <h2 data-key="why">لماذا 15%؟</h2>
+
     <div class="features">
       <div class="feature">
         <i class="fas fa-wallet"></i>
@@ -130,18 +115,33 @@
         <p data-key="feature3Desc">كل بياناتك تُخزن محليًا على جهازك لتبقى سرية وآمنة 100٪.</p>
       </div>
     </div>
+
+    <!-- تسجيل الدخول بجوجل -->
+    <div style="margin-top: 40px;">
+      <div id="g_id_onload"
+           data-client_id="195413879651-lgdd99m1gaqltd2urtqg2n9ckbsgai4o.apps.googleusercontent.com"
+           data-context="signin"
+           data-ux_mode="popup"
+           data-callback="handleCredentialResponse"
+           data-auto_prompt="false">
+      </div>
+
+      <div class="g_id_signin"
+           data-type="standard"
+           data-shape="rectangular"
+           data-theme="outline"
+           data-text="sign_in_with"
+           data-size="large"
+           data-logo_alignment="left">
+      </div>
+    </div>
+
     <a href="split.html"><button class="btn" data-key="startBtn">ابدأ الآن</button></a>
   </div>
+
   <footer data-key="footer">©️ جميع الحقوق محفوظة - 15Percent 2025</footer>
 
   <script>
-    function handleCredentialResponse(response) {
-      const jwt = response.credential;
-      const payload = JSON.parse(atob(jwt.split('.')[1]));
-      alert("مرحبًا " + payload.name + " 👋");
-      console.log(payload);
-    }
-
     let lang = 'ar';
     const translations = {
       ar: {
@@ -187,14 +187,13 @@
         if (translations[lang][key]) el.textContent = translations[lang][key];
       });
     }
+
+    function handleCredentialResponse(response) {
+      const jwt = response.credential;
+      const payload = JSON.parse(atob(jwt.split('.')[1]));
+      alert("مرحبًا " + payload.name + " 👋");
+      console.log(payload);
+    }
   </script>
 </body>
 </html>
-"""
-
-# Save to file
-path = "/mnt/data/index_with_google_login.html"
-with open(path, "w", encoding="utf-8") as f:
-    f.write(index_html_content)
-
-path
