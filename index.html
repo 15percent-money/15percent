@@ -25,15 +25,8 @@
     .container {
       padding: 40px 20px;
     }
-    h1 {
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-    p {
-      font-size: 18px;
-      margin-bottom: 30px;
-      color: #333;
-    }
+    h1 { font-size: 36px; margin-bottom: 10px; }
+    p { font-size: 18px; margin-bottom: 30px; color: #333; }
     .features {
       display: flex;
       justify-content: space-around;
@@ -53,10 +46,7 @@
       color: #004aad;
       margin-bottom: 15px;
     }
-    .feature h3 {
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
+    .feature h3 { font-size: 20px; margin-bottom: 10px; }
     .btn {
       padding: 12px 30px;
       font-size: 18px;
@@ -77,6 +67,12 @@
       border: 2px solid #004aad;
       font-weight: bold;
     }
+    #user-name {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #004aad;
+      font-weight: bold;
+    }
     @media (max-width: 768px) {
       .features {
         flex-direction: column;
@@ -86,9 +82,28 @@
   </style>
 </head>
 <body>
-  <header data-key="header">مرحبًا بك في 15Percent</header>
+  <header id="header" data-key="header">مرحبًا بك في 15Percent</header>
+  <div id="user-name"></div>
 
   <button class="btn lang-btn" onclick="toggleLang()" data-key="language">English</button>
+
+  <!-- Google Sign In -->
+  <div id="g_id_onload"
+       data-client_id="195413879651-lgdd99m1gaqltd2urtqg2n9ckbsgai4o.apps.googleusercontent.com"
+       data-context="signin"
+       data-ux_mode="popup"
+       data-callback="handleCredentialResponse"
+       data-auto_prompt="false">
+  </div>
+  <div class="g_id_signin"
+       id="signinBtn"
+       data-type="standard"
+       data-shape="rectangular"
+       data-theme="outline"
+       data-text="sign_in_with"
+       data-size="large"
+       data-logo_alignment="left">
+  </div>
 
   <div class="container">
     <h1 data-key="mainTitle">قسّم دخلك بذكاء</h1>
@@ -116,26 +131,6 @@
       </div>
     </div>
 
-    <!-- تسجيل الدخول بجوجل -->
-    <div style="margin-top: 40px;">
-      <div id="g_id_onload"
-           data-client_id="195413879651-lgdd99m1gaqltd2urtqg2n9ckbsgai4o.apps.googleusercontent.com"
-           data-context="signin"
-           data-ux_mode="popup"
-           data-callback="handleCredentialResponse"
-           data-auto_prompt="false">
-      </div>
-
-      <div class="g_id_signin"
-           data-type="standard"
-           data-shape="rectangular"
-           data-theme="outline"
-           data-text="sign_in_with"
-           data-size="large"
-           data-logo_alignment="left">
-      </div>
-    </div>
-
     <a href="split.html"><button class="btn" data-key="startBtn">ابدأ الآن</button></a>
   </div>
 
@@ -143,6 +138,8 @@
 
   <script>
     let lang = 'ar';
+    let userName = "";
+
     const translations = {
       ar: {
         header: "مرحبًا بك في 15Percent",
@@ -191,8 +188,9 @@
     function handleCredentialResponse(response) {
       const jwt = response.credential;
       const payload = JSON.parse(atob(jwt.split('.')[1]));
-      alert("مرحبًا " + payload.name + " 👋");
-      console.log(payload);
+      userName = payload.name;
+      document.getElementById("user-name").textContent = "أهلاً " + userName + " 👋";
+      document.getElementById("signinBtn").style.display = "none";
     }
   </script>
 </body>
