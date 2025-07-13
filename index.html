@@ -83,6 +83,7 @@
       }
     }
   </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2RS8RSL7PX"></script>
@@ -134,6 +135,25 @@
     const translations = {
       ar: {
         header: "مرحبًا بك في 15Percent",
+        <header>نظام تقسيم الدخل - 15Percent</header>
+
+<!-- تسجيل الدخول بجوجل -->
+<div id="g_id_onload"
+     data-client_id="195413879651-lgdd99m1gaqltd2urtqg2n9ckbsgai4o.apps.googleusercontent.com"
+     data-context="signin"
+     data-ux_mode="popup"
+     data-callback="handleCredentialResponse"
+     data-auto_prompt="false">
+</div>
+
+<div class="g_id_signin"
+     data-type="standard"
+     data-shape="rectangular"
+     data-theme="outline"
+     data-text="sign_in_with"
+     data-size="large"
+     data-logo_alignment="left">
+</div>
         mainTitle: "قسّم دخلك بذكاء",
         mainDesc: "15Percent يساعدك على تنظيم دخلك الشهري بطريقة ذكية إلى ثلاث حسابات رئيسية.",
         introText: "فقط 15٪ من الناس يعرفون كيف يُديرون دخلهم بذكاء… كن من القلة التي تصنع الفرق!",
@@ -176,5 +196,13 @@
       });
     }
   </script>
+  <script>
+  function handleCredentialResponse(response) {
+    const jwt = response.credential;
+    const payload = JSON.parse(atob(jwt.split('.')[1]));
+    alert("مرحبًا " + payload.name + " 👋");
+    console.log(payload); // للمطورين فقط
+  }
+</script>
 </body>
 </html>
