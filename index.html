@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>15Percent | الصفحة الرئيسية</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(to bottom, #eaf3ff, #ffffff);
+      color: #002b5c;
+      text-align: center;
+      direction: rtl;
+    }
+    header, footer {
+      background: #002b5c;
+      color: white;
+      padding: 15px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .container {
+      padding: 40px 20px;
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #333;
+    }
+    .features {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-top: 40px;
+      gap: 20px;
+    }
+    .feature {
+      width: 280px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .feature i {
+      font-size: 40px;
+      color: #004aad;
+      margin-bottom: 15px;
+    }
+    .feature h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .btn {
+      padding: 12px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #004aad;
+      color: white;
+      font-weight: bold;
+      margin-top: 30px;
+    }
+    .lang-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: #ffffff;
+      color: #004aad;
+      border: 2px solid #004aad;
+      font-weight: bold;
+    }
+    @media (max-width: 768px) {
+      .features {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header data-key="header">مرحبًا بك في 15Percent</header>
+
+  <button class="btn lang-btn" onclick="toggleLang()" data-key="language">English</button>
+
+  <div class="container">
+    <h1 data-key="mainTitle">قسّم دخلك بذكاء</h1>
+    <p data-key="mainDesc">15Percent يساعدك على تنظيم دخلك الشهري بطريقة ذكية إلى ثلاث حسابات رئيسية.</p>
+
+    <h2 data-key="introText">فقط 15٪ من الناس يعرفون كيف يُديرون دخلهم بذكاء… كن من القلة التي تصنع الفرق!</h2>
+
+    <h2 data-key="why">لماذا 15%؟</h2>
+
+    <div class="features">
+      <div class="feature">
+        <i class="fas fa-wallet"></i>
+        <h3 data-key="feature1Title">إدارة مالية ذكية</h3>
+        <p data-key="feature1Desc">يساعدك 15Percent على تقسيم دخلك وتوزيعه بذكاء بين احتياجاتك الأساسية وطموحاتك.</p>
+      </div>
+      <div class="feature">
+        <i class="fas fa-bullseye"></i>
+        <h3 data-key="feature2Title">تحقيق الأهداف</h3>
+        <p data-key="feature2Desc">تابع نفقاتك وحدد أولوياتك لتصل لأهدافك المالية بسرعة وسهولة.</p>
+      </div>
+      <div class="feature">
+        <i class="fas fa-lock"></i>
+        <h3 data-key="feature3Title">خصوصية وأمان</h3>
+        <p data-key="feature3Desc">كل بياناتك تُخزن محليًا على جهازك لتبقى سرية وآمنة 100٪.</p>
+      </div>
+    </div>
+
+    <a href="split.html"><button class="btn" data-key="startBtn">ابدأ الآن</button></a>
+  </div>
+
+  <footer data-key="footer">© جميع الحقوق محفوظة - 15Percent 2025</footer>
+
+  <script>
+    let lang = 'ar';
+    const translations = {
+      ar: {
+        header: "مرحبًا بك في 15Percent",
+        mainTitle: "قسّم دخلك بذكاء",
+        mainDesc: "15Percent يساعدك على تنظيم دخلك الشهري بطريقة ذكية إلى ثلاث حسابات رئيسية.",
+        introText: "فقط 15٪ من الناس يعرفون كيف يُديرون دخلهم بذكاء… كن من القلة التي تصنع الفرق!",
+        why: "لماذا 15%؟",
+        feature1Title: "إدارة مالية ذكية",
+        feature1Desc: "يساعدك 15Percent على تقسيم دخلك وتوزيعه بذكاء بين احتياجاتك الأساسية وطموحاتك.",
+        feature2Title: "تحقيق الأهداف",
+        feature2Desc: "تابع نفقاتك وحدد أولوياتك لتصل لأهدافك المالية بسرعة وسهولة.",
+        feature3Title: "خصوصية وأمان",
+        feature3Desc: "كل بياناتك تُخزن محليًا على جهازك لتبقى سرية وآمنة 100٪.",
+        startBtn: "ابدأ الآن",
+        footer: "© جميع الحقوق محفوظة - 15Percent 2025",
+        language: "English"
+      },
+      en: {
+        header: "Welcome to 15Percent",
+        mainTitle: "Split Your Income Smartly",
+        mainDesc: "15Percent helps you organize your monthly income into three smart accounts.",
+        introText: "Only 15% of people know how to manage their income smartly… Be among the few who make a difference!",
+        why: "Why 15%?",
+        feature1Title: "Smart Financial Management",
+        feature1Desc: "15Percent helps you split your income smartly between your needs and dreams.",
+        feature2Title: "Achieve Your Goals",
+        feature2Desc: "Track your expenses and set priorities to reach your financial goals fast.",
+        feature3Title: "Privacy & Security",
+        feature3Desc: "Your data is stored locally on your device to remain 100% safe and private.",
+        startBtn: "Start Now",
+        footer: "© All rights reserved - 15Percent 2025",
+        language: "العربية"
+      }
+    };
+
+    function toggleLang() {
+      lang = lang === 'ar' ? 'en' : 'ar';
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (translations[lang][key]) el.textContent = translations[lang][key];
+      });
+    }
+  </script>
+</body>
+</html>
