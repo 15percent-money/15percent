@@ -23,23 +23,27 @@
       padding: 10px;
     }
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
       padding: 20px;
     }
     input, select, button {
       width: 100%;
       margin-bottom: 10px;
-      padding: 8px;
-      border-radius: 6px;
+      padding: 10px;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      font-size: 13px;
+      font-size: 14px;
     }
     button {
       background: #004aad;
       color: white;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.3s ease;
+    }
+    button:hover {
+      opacity: 0.9;
     }
     button.reset {
       background: #b00020;
@@ -49,10 +53,11 @@
     }
     .section {
       margin-top: 20px;
-      padding: 15px;
+      padding: 20px;
       background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 5px #ccc;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: 0.3s ease;
     }
     .section h3:before {
       content: attr(data-icon);
@@ -66,10 +71,11 @@
       background: #e2f0ff;
       margin-bottom: 6px;
       padding: 10px;
-      border-radius: 6px;
+      border-radius: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: 0.3s ease;
     }
     li.done span {
       text-decoration: line-through;
@@ -78,23 +84,23 @@
     .actions button {
       margin-left: 5px;
       border: none;
-      padding: 5px;
-      border-radius: 4px;
+      padding: 5px 8px;
+      border-radius: 6px;
       font-size: 13px;
     }
     .done-btn { background: #2ecc71; color: white; }
     .delete-btn { background: #e74c3c; color: white; }
     .toast {
       position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 20px;
+      right: 20px;
       background: #004aad;
       color: white;
       padding: 12px 20px;
-      border-radius: 6px;
+      border-radius: 8px;
       opacity: 0;
       transition: 0.5s;
+      z-index: 1000;
     }
     .toast.show { opacity: 1; }
     .suggestion {
@@ -102,6 +108,13 @@
       font-weight: bold;
       color: #007700;
       margin-top: 15px;
+    }
+    .report-section {
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
   </style>
 </head>
@@ -113,7 +126,7 @@
   <div class="container">
     <label id="income-label">الدخل الكلي</label>
     <input type="number" id="income" placeholder="أدخل المبلغ">
-    
+
     <label id="currency-label">اختر العملة</label>
     <select id="currency">
       <option value="USD">$ دولار</option>
@@ -122,11 +135,10 @@
       <option value="SAR">ر.س ريال</option>
       <option value="KWD">د.ك دينار</option>
     </select>
-    
+
     <button id="addIncomeBtn" onclick="addIncome()">أضف الدخل</button>
     <button class="reset" id="resetBtn" onclick="resetData()">مسح كل البيانات</button>
     <button class="undo" id="undoBtn" onclick="undoLast()">خطوة للوراء</button>
-
     <div class="section">
       <h3 id="personal-title" data-icon="👤">الحساب الشخصي: <span id="personal-balance">0</span></h3>
       <input type="text" id="personal-item" placeholder="اسم البند">
@@ -151,12 +163,26 @@
       <ul id="investment-list"></ul>
       <div class="suggestion" id="suggestionBox"></div>
     </div>
+
+    <div class="report-section">
+      <h3>📄 طباعة تقرير مفصل</h3>
+      <label for="report-account">اختر الحساب</label>
+      <select id="report-account">
+        <option value="personal">الحساب الشخصي</option>
+        <option value="commitments">الالتزامات</option>
+        <option value="investment">الاستثمار</option>
+      </select>
+      <label>من تاريخ</label>
+      <input type="date" id="report-from">
+      <label>إلى تاريخ</label>
+      <input type="date" id="report-to">
+      <button onclick="generateReport()">طباعة التقرير</button>
+    </div>
   </div>
 
   <div class="toast" id="toast">تمت العملية بنجاح</div>
   <footer id="footer-text">©️ جميع الحقوق محفوظة - 15Percent</footer>
-
-<script>
+  <script>
   let balances = { personal: 0, commitments: 0, investment: 0 };
   let currency = 'USD';
   let currentLang = 'ar';
@@ -165,78 +191,50 @@
 
   const symbols = { USD: "$", EUR: "€", AED: "د.إ", SAR: "ر.س", KWD: "د.ك" };
 
-  const texts = {
-    ar: {
-      header: "نظام تقسيم الدخل - 15Percent",
-      income: "الدخل الكلي",
-      placeholderIncome: "أدخل المبلغ",
-      currency: "اختر العملة",
-      addIncome: "أضف الدخل",
-      reset: "مسح كل البيانات",
-      undo: "خطوة للوراء",
-      personal: "الحساب الشخصي",
-      commitments: "الالتزامات",
-      investment: "الاستثمار",
-      itemName: "اسم البند",
-      amount: "المبلغ",
-      addItem: "إضافة بند",
-      toast: "تمت العملية بنجاح",
-      suggestionHigh: "استثمر في مشروع أو عمل حر.",
-      suggestionMid: "ادخر لصندوق الطوارئ.",
-      suggestionLow: "ابدأ بتعلم مهارة جديدة.",
-      footer: "©️ جميع الحقوق محفوظة - 15Percent",
-      lang: "English"
-    },
-    en: {
-      header: "15Percent - Income Split System",
-      income: "Total Income",
-      placeholderIncome: "Enter amount",
-      currency: "Select currency",
-      addIncome: "Add Income",
-      reset: "Clear All Data",
-      undo: "Undo Last",
-      personal: "Personal Account",
-      commitments: "Commitments",
-      investment: "Investment",
-      itemName: "Item Name",
-      amount: "Amount",
-      addItem: "Add Item",
-      toast: "Operation Successful",
-      suggestionHigh: "Invest in a business or freelance project.",
-      suggestionMid: "Save for an emergency fund.",
-      suggestionLow: "Start learning a new skill.",
-      footer: "©️ All rights reserved - 15Percent",
-      lang: "العربية"
-    }
-  };
-
-  function toggleLanguage() {
-    currentLang = currentLang === 'ar' ? 'en' : 'ar';
-    document.documentElement.lang = currentLang;
-    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-    const t = texts[currentLang];
-    document.getElementById("langToggle").textContent = t.lang;
-    document.getElementById("header-title").textContent = t.header;
-    document.getElementById("income-label").textContent = t.income;
-    document.getElementById("income").placeholder = t.placeholderIncome;
-    document.getElementById("currency-label").textContent = t.currency;
-    document.getElementById("addIncomeBtn").textContent = t.addIncome;
-    document.getElementById("resetBtn").textContent = t.reset;
-    document.getElementById("undoBtn").textContent = t.undo;
-    
-    document.getElementById("personal-title").childNodes[0].nodeValue = t.personal + ": ";
-    document.getElementById("commitments-title").childNodes[0].nodeValue = t.commitments + ": ";
-    document.getElementById("investment-title").childNodes[0].nodeValue = t.investment + ": ";
-
-    document.querySelectorAll("input[placeholder]").forEach(input => {
-      if (input.id.includes("item")) input.placeholder = t.itemName;
-      else if (input.id.includes("amount")) input.placeholder = t.amount;
-    });
-    document.querySelectorAll(".add-item-btn").forEach(btn => btn.textContent = t.addItem);
-    document.getElementById("footer-text").textContent = t.footer;
-    showSuggestion();
+  function showToast(msg) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 3000);
   }
 
+  function addItem(type) {
+    const item = document.getElementById(`${type}-item`).value;
+    const amount = parseFloat(document.getElementById(`${type}-amount`).value);
+    if (!item || isNaN(amount)) return;
+    items[type].push({ name: item, amount, date: new Date().toISOString() });
+    lastAction = { type, name: item, amount };
+    saveData();
+    renderItems();
+    showToast("تمت إضافة البند");
+  }
+
+  function generateReport() {
+    const type = document.getElementById("report-account").value;
+    const from = new Date(document.getElementById("report-from").value);
+    const to = new Date(document.getElementById("report-to").value);
+    if (!type || isNaN(from.getTime()) || isNaN(to.getTime())) {
+      alert("يرجى تحديد جميع الخيارات");
+      return;
+    }
+
+    const filtered = items[type].filter(i => {
+      const d = new Date(i.date);
+      return d >= from && d <= to;
+    });
+
+    let content = `تقرير ${texts[currentLang][type]} (${from.toDateString()} - ${to.toDateString()})\n\n`;
+    filtered.forEach((i, idx) => {
+      const d = new Date(i.date).toLocaleDateString();
+      content += `${idx + 1}- ${i.name} | ${i.amount.toFixed(2)} ${symbols[currency]} | التاريخ: ${d}\n`;
+    });
+
+    const w = window.open('', '_blank');
+    w.document.write(`<pre>${content}</pre>`);
+    w.print();
+  }
+</script>
+<script>
   function updateUI() {
     document.getElementById('personal-balance').textContent = balances.personal.toFixed(2) + " " + symbols[currency];
     document.getElementById('commitments-balance').textContent = balances.commitments.toFixed(2) + " " + symbols[currency];
@@ -285,25 +283,41 @@
     });
   }
 
-  function addItem(type) {
-    const item = document.getElementById(`${type}-item`).value;
-    const amount = parseFloat(document.getElementById(`${type}-amount`).value);
-    if (!item || isNaN(amount)) return;
-    items[type].push({ name: item, amount });
-    lastAction = { type, name: item, amount };
-    saveData();
-    renderItems();
-  }
-
   function undoLast() {
     if (!lastAction) return;
-    items[lastAction.type].push({ name: lastAction.name, amount: lastAction.amount });
+    items[lastAction.type].push({ name: lastAction.name, amount: lastAction.amount, date: new Date().toISOString() });
     balances[lastAction.type] += lastAction.amount;
     lastAction = null;
     saveData();
     renderItems();
     updateUI();
     showSuggestion();
+  }
+
+  function addIncome() {
+    const income = parseFloat(document.getElementById('income').value);
+    currency = document.getElementById('currency').value;
+    if (!income || income <= 0) return alert("أدخل مبلغ صحيح");
+    const third = income / 3;
+    balances.personal += third;
+    balances.commitments += third;
+    balances.investment += third;
+    updateUI();
+    showToast(texts[currentLang].toast);
+    showSuggestion();
+    saveData();
+  }
+
+  function resetData() {
+    if (confirm("هل أنت متأكد؟")) {
+      balances = { personal: 0, commitments: 0, investment: 0 };
+      items = { personal: [], commitments: [], investment: [] };
+      lastAction = null;
+      updateUI();
+      renderItems();
+      showSuggestion();
+      localStorage.clear();
+    }
   }
 
   function saveData() {
@@ -327,39 +341,6 @@
     showSuggestion();
   }
 
-  function resetData() {
-    if (confirm("هل أنت متأكد؟")) {
-      balances = { personal: 0, commitments: 0, investment: 0 };
-      items = { personal: [], commitments: [], investment: [] };
-      lastAction = null;
-      updateUI();
-      renderItems();
-      showSuggestion();
-      localStorage.clear();
-    }
-  }
-
-  function addIncome() {
-    const income = parseFloat(document.getElementById('income').value);
-    currency = document.getElementById('currency').value;
-    if (!income || income <= 0) return alert("أدخل مبلغ صحيح");
-    const third = income / 3;
-    balances.personal += third;
-    balances.commitments += third;
-    balances.investment += third;
-    updateUI();
-    showToast(texts[currentLang].toast);
-    showSuggestion();
-    saveData();
-  }
-
-  function showToast(msg) {
-    const toast = document.getElementById("toast");
-    toast.textContent = msg;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 3000);
-  }
-
   function showSuggestion() {
     const val = balances.investment;
     const box = document.getElementById("suggestionBox");
@@ -370,7 +351,32 @@
     box.textContent = msg;
   }
 
+  function toggleLanguage() {
+    currentLang = currentLang === 'ar' ? 'en' : 'ar';
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    const t = texts[currentLang];
+    document.getElementById("langToggle").textContent = t.lang;
+    document.getElementById("header-title").textContent = t.header;
+    document.getElementById("income-label").textContent = t.income;
+    document.getElementById("income").placeholder = t.placeholderIncome;
+    document.getElementById("currency-label").textContent = t.currency;
+    document.getElementById("addIncomeBtn").textContent = t.addIncome;
+    document.getElementById("resetBtn").textContent = t.reset;
+    document.getElementById("undoBtn").textContent = t.undo;
+
+    document.getElementById("personal-title").childNodes[0].nodeValue = t.personal + ": ";
+    document.getElementById("commitments-title").childNodes[0].nodeValue = t.commitments + ": ";
+    document.getElementById("investment-title").childNodes[0].nodeValue = t.investment + ": ";
+
+    document.querySelectorAll("input[placeholder]").forEach(input => {
+      if (input.id.includes("item")) input.placeholder = t.itemName;
+      else if (input.id.includes("amount")) input.placeholder = t.amount;
+    });
+    document.querySelectorAll(".add-item-btn").forEach(btn => btn.textContent = t.addItem);
+    document.getElementById("footer-text").textContent = t.footer;
+    showSuggestion();
+  }
+
   window.onload = loadData;
 </script>
-</body>
-</html>
