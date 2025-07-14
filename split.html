@@ -223,9 +223,11 @@
     document.getElementById("addIncomeBtn").textContent = t.addIncome;
     document.getElementById("resetBtn").textContent = t.reset;
     document.getElementById("undoBtn").textContent = t.undo;
-    document.getElementById("personal-title").childNodes[1].textContent = t.personal + ": ";
-    document.getElementById("commitments-title").childNodes[1].textContent = t.commitments + ": ";
-    document.getElementById("investment-title").childNodes[1].textContent = t.investment + ": ";
+    
+    document.getElementById("personal-title").childNodes[0].nodeValue = t.personal + ": ";
+    document.getElementById("commitments-title").childNodes[0].nodeValue = t.commitments + ": ";
+    document.getElementById("investment-title").childNodes[0].nodeValue = t.investment + ": ";
+
     document.querySelectorAll("input[placeholder]").forEach(input => {
       if (input.id.includes("item")) input.placeholder = t.itemName;
       else if (input.id.includes("amount")) input.placeholder = t.amount;
@@ -288,7 +290,7 @@
     const amount = parseFloat(document.getElementById(`${type}-amount`).value);
     if (!item || isNaN(amount)) return;
     items[type].push({ name: item, amount });
-    lastAction = { type, name: item, amount }; // Save for undo
+    lastAction = { type, name: item, amount };
     saveData();
     renderItems();
   }
@@ -346,7 +348,7 @@
     balances.commitments += third;
     balances.investment += third;
     updateUI();
-    showToast("تمت العملية بنجاح");
+    showToast(texts[currentLang].toast);
     showSuggestion();
     saveData();
   }
