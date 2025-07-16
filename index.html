@@ -115,9 +115,7 @@
   <div class="container">
     <h1 data-key="mainTitle">قسّم دخلك بذكاء</h1>
     <p data-key="mainDesc">15Percent يساعدك على تنظيم دخلك الشهري بطريقة ذكية إلى ثلاث حسابات رئيسية.</p>
-
     <h2 data-key="introText">فقط 15٪ من الناس يعرفون كيف يُديرون دخلهم بذكاء… كن من القلة التي تصنع الفرق!</h2>
-
     <h2 data-key="why">لماذا 15%؟</h2>
 
     <div class="features">
@@ -138,7 +136,7 @@
       </div>
     </div>
 
-    <!-- زر "ابدأ الآن" الجديد -->
+    <!-- الزر بعد التعديل -->
     <button class="btn" data-key="startBtn" onclick="startApp()">ابدأ الآن</button>
   </div>
 
@@ -197,9 +195,9 @@
       const jwt = response.credential;
       const payload = JSON.parse(atob(jwt.split('.')[1]));
       userName = payload.name;
-      localStorage.setItem("userName", userName);
       document.getElementById("user-name").textContent = "أهلاً " + userName + " 👋";
       document.getElementById("signinBtn").style.display = "none";
+      localStorage.setItem("userName", userName);
     }
 
     function startApp() {
@@ -207,7 +205,7 @@
       if (savedName) {
         window.location.href = "split.html";
       } else {
-        google.accounts.id.prompt(); // يطلب تسجيل دخول
+        google.accounts.id.prompt();
       }
     }
   </script>
