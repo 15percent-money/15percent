@@ -91,6 +91,7 @@
 <body>
   <header id="header" data-key="header">مرحبًا بك في 15Percent</header>
   <div id="user-name"></div>
+
   <button class="btn lang-btn" onclick="toggleLang()" data-key="language">English</button>
 
   <!-- Google Sign In -->
@@ -137,7 +138,7 @@
       </div>
     </div>
 
-    <!-- زر البدء -->
+    <!-- زر "ابدأ الآن" الجديد -->
     <button class="btn" data-key="startBtn" onclick="startApp()">ابدأ الآن</button>
   </div>
 
@@ -201,21 +202,12 @@
       document.getElementById("signinBtn").style.display = "none";
     }
 
-    window.onload = () => {
-      const savedName = localStorage.getItem("userName");
-      if (savedName) {
-        userName = savedName;
-        document.getElementById("user-name").textContent = "أهلاً " + userName + " 👋";
-        document.getElementById("signinBtn").style.display = "none";
-      }
-    }
-
     function startApp() {
       const savedName = localStorage.getItem("userName");
       if (savedName) {
         window.location.href = "split.html";
       } else {
-        google.accounts.id.prompt();
+        google.accounts.id.prompt(); // يطلب تسجيل دخول
       }
     }
   </script>
