@@ -6,16 +6,17 @@
   <title>15Percent | الصفحة الرئيسية</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
- <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2RS8RSL7PX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-2RS8RSL7PX');
-</script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2RS8RSL7PX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-2RS8RSL7PX');
+  </script>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <style>
     body {
       margin: 0;
@@ -141,7 +142,8 @@
       </div>
     </div>
 
-    <button class="btn" data-key="startBtn" onclick="checkLogin()">ابدأ الآن</button>
+    <!-- زر ابدأ الآن المعدل -->
+    <button class="btn" data-key="startBtn" onclick="startNow()">ابدأ الآن</button>
   </div>
 
   <footer data-key="footer">©️ جميع الحقوق محفوظة - 15Percent 2025</footer>
@@ -201,15 +203,13 @@
       userName = payload.name;
       document.getElementById("user-name").textContent = "أهلاً " + userName + " 👋";
       document.getElementById("signinBtn").style.display = "none";
-      localStorage.setItem("loggedIn", "true");
     }
 
-    function checkLogin() {
-      const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-      if (isLoggedIn) {
+    function startNow() {
+      if (userName && userName !== "") {
         window.location.href = "split.html";
       } else {
-        alert("يرجى تسجيل الدخول بحساب Google أولاً للمتابعة.");
+        google.accounts.id.prompt(); // يظهر نافذة تسجيل الدخول
       }
     }
   </script>
