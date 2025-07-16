@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>15Percent | الصفحة الرئيسية</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-2RS8RSL7PX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -14,7 +12,6 @@
     gtag('js', new Date());
     gtag('config', 'G-2RS8RSL7PX');
   </script>
-
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     body {
@@ -94,7 +91,6 @@
 <body>
   <header id="header" data-key="header">مرحبًا بك في 15Percent</header>
   <div id="user-name"></div>
-
   <button class="btn lang-btn" onclick="toggleLang()" data-key="language">English</button>
 
   <!-- Google Sign In -->
@@ -141,7 +137,7 @@
       </div>
     </div>
 
-    <!-- زر يبدأ التطبيق بعد التأكد من تسجيل الدخول -->
+    <!-- زر البدء -->
     <button class="btn" data-key="startBtn" onclick="startApp()">ابدأ الآن</button>
   </div>
 
@@ -200,15 +196,26 @@
       const jwt = response.credential;
       const payload = JSON.parse(atob(jwt.split('.')[1]));
       userName = payload.name;
+      localStorage.setItem("userName", userName);
       document.getElementById("user-name").textContent = "أهلاً " + userName + " 👋";
       document.getElementById("signinBtn").style.display = "none";
     }
 
+    window.onload = () => {
+      const savedName = localStorage.getItem("userName");
+      if (savedName) {
+        userName = savedName;
+        document.getElementById("user-name").textContent = "أهلاً " + userName + " 👋";
+        document.getElementById("signinBtn").style.display = "none";
+      }
+    }
+
     function startApp() {
-      if (userName) {
+      const savedName = localStorage.getItem("userName");
+      if (savedName) {
         window.location.href = "split.html";
       } else {
-        google.accounts.id.prompt(); // فتح نافذة تسجيل الدخول
+        google.accounts.id.prompt();
       }
     }
   </script>
