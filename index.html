@@ -16,7 +16,6 @@
   </script>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-
   <style>
     body {
       margin: 0;
@@ -142,8 +141,8 @@
       </div>
     </div>
 
-    <!-- زر ابدأ الآن المعدل -->
-    <button class="btn" data-key="startBtn" onclick="startNow()">ابدأ الآن</button>
+    <!-- زر يبدأ التطبيق بعد التأكد من تسجيل الدخول -->
+    <button class="btn" data-key="startBtn" onclick="startApp()">ابدأ الآن</button>
   </div>
 
   <footer data-key="footer">©️ جميع الحقوق محفوظة - 15Percent 2025</footer>
@@ -205,11 +204,11 @@
       document.getElementById("signinBtn").style.display = "none";
     }
 
-    function startNow() {
-      if (userName && userName !== "") {
+    function startApp() {
+      if (userName) {
         window.location.href = "split.html";
       } else {
-        google.accounts.id.prompt(); // يظهر نافذة تسجيل الدخول
+        google.accounts.id.prompt(); // فتح نافذة تسجيل الدخول
       }
     }
   </script>
