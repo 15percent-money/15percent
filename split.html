@@ -138,7 +138,6 @@
     <button id="addIncomeBtn" onclick="addIncome()">أضف الدخل</button>
     <button class="reset" id="resetBtn" onclick="resetData()">مسح كل البيانات</button>
     <button class="undo" id="undoBtn" onclick="undoLast()">تراجع</button>
-
     <div class="section">
       <h3 id="personal-title" data-icon="👤">الحساب الشخصي: <span id="personal-balance">0</span></h3>
       <input type="text" id="personal-item" placeholder="اسم البند">
@@ -234,9 +233,9 @@
     renderItems();
     showSuggestion();
     saveData();
+    showToast("تم التراجع عن آخر إجراء");
   }
-</script>
-<script>
+
   function generateReport() {
     const type = document.getElementById("report-account").value;
     const from = new Date(document.getElementById("report-from").value);
@@ -314,46 +313,14 @@
   }
 </script>
 <script>
-  function undoLast() {
-    if (lastActions.length === 0) return;
-    const prevState = JSON.parse(lastActions.pop());
-    balances = prevState.balances;
-    items = prevState.items;
-    saveData();
-    renderItems();
-    updateUI();
-    showSuggestion();
-    showToast("تم التراجع عن آخر إجراء");
-  }
-
-  function addIncome() {
-    const income = parseFloat(document.getElementById('income').value);
-    currency = document.getElementById('currency').value;
-    if (!income || income <= 0) return alert("أدخل مبلغ صحيح");
-
-    lastActions.push(JSON.stringify({ balances, items }));
-
-    const third = income / 3;
-    balances.personal += third;
-    balances.commitments += third;
-    balances.investment += third;
-
-    updateUI();
-    showToast("تمت إضافة الدخل");
-    showSuggestion();
-    saveData();
-  }
-
-  function resetData() {
-    if (confirm("هل أنت متأكد؟")) {
-      lastActions.push(JSON.stringify({ balances, items }));
-      balances = { personal: 0, commitments: 0, investment: 0 };
-      items = { personal: [], commitments: [], investment: [] };
-      updateUI();
-      renderItems();
-      showSuggestion();
-      localStorage.clear();
-    }
+  function showSuggestion() {
+    const val = balances.investment;
+    const box = document.getElementById("suggestionBox");
+    let msg = "";
+    if (val >= 1000) msg = texts[currentLang].suggestionHigh;
+    else if (val >= 500) msg = texts[currentLang].suggestionMid;
+    else msg = texts[currentLang].suggestionLow;
+    box.textContent = msg;
   }
 
   function saveData() {
@@ -375,17 +342,6 @@
     updateUI();
     renderItems();
     showSuggestion();
-  }
-</script>
-<script>
-  function showSuggestion() {
-    const val = balances.investment;
-    const box = document.getElementById("suggestionBox");
-    let msg = "";
-    if (val >= 1000) msg = texts[currentLang].suggestionHigh;
-    else if (val >= 500) msg = texts[currentLang].suggestionMid;
-    else msg = texts[currentLang].suggestionLow;
-    box.textContent = msg;
   }
 
   const texts = {
@@ -431,7 +387,22 @@
     }
   };
 
+  function toggleLanguage() {
+    currentLang = currentLang === 'ar' ? 'en' : 'ar';
+    document.getElementById("langToggle").textContent = texts[currentLang].lang;
+    document.getElementById("header-title").textContent = texts[currentLang].header;
+    document.getElementById("income-label").textContent = texts[currentLang].income;
+    document.getElementById("income").placeholder = texts[currentLang].placeholderIncome;
+    document.getElementById("currency-label").textContent = texts[currentLang].currency;
+    document.getElementById("addIncomeBtn").textContent = texts[currentLang].addIncome;
+    document.getElementById("resetBtn").textContent = texts[currentLang].reset;
+    document.getElementById("undoBtn").textContent = texts[currentLang].undo;
+    document.getElementById("personal-title").innerHTML = `👤 ${texts[currentLang].personal}: <span id="personal-balance">${balances.personal.toFixed(2)} ${symbols[currency]}</span>`;
+    document.getElementById("commitments-title").innerHTML = `📄 ${texts[currentLang].commitments}: <span id="commitments-balance">${balances.commitments.toFixed(2)} ${symbols[currency]}</span>`;
+    document.getElementById("investment-title").innerHTML = `📈 ${texts[currentLang].investment}: <span id="investment-balance">${balances.investment.toFixed(2)} ${symbols[currency]}</span>`;
+    document.getElementById("footer-text").textContent = texts[currentLang].footer;
+    showSuggestion();
+  }
+
   window.onload = loadData;
 </script>
-</body>
-</html>
