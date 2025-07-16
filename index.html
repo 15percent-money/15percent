@@ -12,7 +12,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-2RS8RSL7PX');
 </script>
 
@@ -142,7 +141,7 @@
       </div>
     </div>
 
-    <a href="split.html"><button class="btn" data-key="startBtn">ابدأ الآن</button></a>
+    <button class="btn" data-key="startBtn" onclick="checkLogin()">ابدأ الآن</button>
   </div>
 
   <footer data-key="footer">©️ جميع الحقوق محفوظة - 15Percent 2025</footer>
@@ -202,6 +201,16 @@
       userName = payload.name;
       document.getElementById("user-name").textContent = "أهلاً " + userName + " 👋";
       document.getElementById("signinBtn").style.display = "none";
+      localStorage.setItem("loggedIn", "true");
+    }
+
+    function checkLogin() {
+      const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+      if (isLoggedIn) {
+        window.location.href = "split.html";
+      } else {
+        alert("يرجى تسجيل الدخول بحساب Google أولاً للمتابعة.");
+      }
     }
   </script>
 </body>
